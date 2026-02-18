@@ -21,7 +21,7 @@ export default function SiteShell({
 
   return (
     <div className="min-h-screen bg-white font-sans text-zinc-900">
-      <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col px-6 pb-20 pt-10 sm:px-10 sm:pt-14 border">
+      <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col px-6 pb-20 pt-10 sm:px-10 sm:pt-14">
         <header className="flex items-center justify-center">
           <nav
             className="flex w-full items-center justify-around text-[13px] tracking-[0.04em] text-zinc-600 sm:text-sm"
