@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Pagination from "../components/Pagination";
 import SiteShell from "../components/SiteShell";
@@ -24,7 +24,18 @@ export default function FilmClient({ isFallback = false }: FilmClientProps) {
     []
   );
 
-  const perPage = 9;
+  const [perPage, setPerPage] = useState(9);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mediaQuery = window.matchMedia("(min-width: 768px)");
+    const updatePerPage = () => {
+      setPerPage(mediaQuery.matches ? 9 : 8);
+    };
+    updatePerPage();
+    mediaQuery.addEventListener("change", updatePerPage);
+    return () => mediaQuery.removeEventListener("change", updatePerPage);
+  }, []);
   const totalPages = Math.ceil(films.length / perPage);
   const router = useRouter();
   const page = useQueryPage({ totalPages });
