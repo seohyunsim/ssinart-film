@@ -1,59 +1,18 @@
-"use client";
-
-import { useMemo } from "react";
-import { useRouter } from "next/navigation";
-import Pagination from "../components/Pagination";
-import SiteShell from "../components/SiteShell";
-import useQueryPage from "../hooks/useQueryPage";
+import { Suspense } from "react";
+import FilmClient from "./FilmClient";
 
 export default function FilmPage() {
-  const films = useMemo(
-    () =>
-      Array.from({ length: 100 }, (_, index) => {
-        const id = 100 - index;
-        return {
-          id,
-          title: `테스트 필름 ${id}`,
-          seed: `film-${String(id).padStart(2, "0")}`,
-        };
-      }),
-    []
-  );
-
-  const perPage = 9;
-  const totalPages = Math.ceil(films.length / perPage);
-  const router = useRouter();
-  const page = useQueryPage({ totalPages });
-  const startIndex = (page - 1) * perPage;
-  const pageItems = films.slice(startIndex, startIndex + perPage);
-  const goToPage = (pageNumber: number) => {
-    router.push(`/film?page=${pageNumber}`);
-  };
-
   return (
-    <SiteShell>
-      <div className="w-full self-stretch text-left">
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-          {pageItems.map((film) => (
-            <article key={film.id} className="space-y-2">
-              <div className="aspect-[3/3] w-full overflow-hidden bg-zinc-200">
-                <img
-                  src={`https://picsum.photos/seed/${film.seed}/640/480`}
-                  alt={film.title}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
-                />
-              </div>
-              <p className="text-[13px] text-zinc-700">{film.title}</p>
-            </article>
-          ))}
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-white font-sans text-zinc-900">
+          <main className="mx-auto flex min-h-screen w-full max-w-3xl items-center justify-center px-6 pb-20 pt-10 sm:px-10 sm:pt-14">
+            <p className="text-[13px] text-zinc-500">Loading...</p>
+          </main>
         </div>
-        <Pagination
-          currentPage={page}
-          totalPages={totalPages}
-          onChange={goToPage}
-        />
-      </div>
-    </SiteShell>
+      }
+    >
+      <FilmClient />
+    </Suspense>
   );
 }
