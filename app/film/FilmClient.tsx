@@ -1,29 +1,30 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Pagination from "../components/Pagination";
 import SiteShell from "../components/SiteShell";
-import useQueryPage from "../hooks/useQueryPage";
+import useQueryPage from "../../src/hooks/useQueryPage";
+import { urlFor } from "@/src/lib/sanity.image";
+import Image from "next/image";
+
+type Film = {
+  _id: string;
+  title: string;
+  youtubeUrl: string;
+  publishedAt: string;
+  coverImage: any;
+};
 
 type FilmClientProps = {
   isFallback?: boolean;
+  films: Film[];
 };
 
-export default function FilmClient({ isFallback = false }: FilmClientProps) {
-  const films = useMemo(
-    () =>
-      Array.from({ length: 100 }, (_, index) => {
-        const id = 100 - index;
-        return {
-          id,
-          title: `테스트 필름 ${id}`,
-          seed: `film-${String(id).padStart(2, "0")}`,
-        };
-      }),
-    []
-  );
-
+export default function FilmClient({
+  isFallback = false,
+  films,
+}: FilmClientProps) {
   const [perPage, setPerPage] = useState(9);
 
   useEffect(() => {
@@ -52,19 +53,34 @@ export default function FilmClient({ isFallback = false }: FilmClientProps) {
     <SiteShell>
       <div className="w-full self-stretch text-left">
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-          {pageItems.map((film) => (
-            <article key={film.id} className="space-y-2">
-              <div className="aspect-[3/3] w-full overflow-hidden bg-zinc-200">
-                <img
-                  src={`https://picsum.photos/seed/${film.seed}/640/480`}
-                  alt={film.title}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
-                />
-              </div>
-              <p className="text-[13px] text-zinc-700">{film.title}</p>
-            </article>
-          ))}
+          {pageItems.map((film) => {
+            const img = urlFor(film.coverImage)
+              .width(900)
+              .height(900)
+              .fit("crop")
+              .url();
+
+            return (
+              <a
+                key={film._id}
+                href={film.youtubeUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="group block"
+              >
+                <div className="relative aspect-square w-full overflow-hidden rounded-md bg-gray-100">
+                  <Image
+                    src={img}
+                    alt={film.title}
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                    sizes="(max-width: 1024px) 50vw, 33vw"
+                  />
+                </div>
+                <p className="mt-3 text-sm text-gray-900">{film.title}</p>
+              </a>
+            );
+          })}
         </div>
         {!isFallback && (
           <Pagination

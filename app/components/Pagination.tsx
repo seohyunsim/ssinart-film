@@ -1,6 +1,6 @@
 "use client";
 
-import usePagination from "../hooks/usePagination";
+import usePagination from "../../src/hooks/usePagination";
 
 type PaginationProps = {
   currentPage: number;

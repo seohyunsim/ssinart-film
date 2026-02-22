@@ -1,7 +1,13 @@
 import { Suspense } from "react";
 import FilmClient from "./FilmClient";
+import { sanity } from "@/src/lib/sanity.client";
+import { FILM_LIST_QUERY } from "@/src/lib/sanity.queries";
 
-export default function FilmPage() {
+export const revalidate = 60; // 60초마다 갱신
+
+export default async function FilmPage() {
+  const films = await sanity.fetch(FILM_LIST_QUERY);
+
   return (
     <Suspense
       fallback={
@@ -12,7 +18,7 @@ export default function FilmPage() {
         </div>
       }
     >
-      <FilmClient />
+      <FilmClient films={films} />
     </Suspense>
   );
 }
